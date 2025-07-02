@@ -12,6 +12,7 @@ Controller\FileController.class
 View\AdminClientView$2.class
 Model\Bill.class
 View\RegisterView$5.class
+Model\Threads\SortingThread$SortingCallback.class
 View\ClientView$1.class
 View\DishesView$4.class
 View\LoginView$2.class
@@ -28,6 +29,7 @@ View\UpdateIngredientView$3.class
 Model\Managers\BillManager.class
 Model\OrderDao.class
 Controller\MainController.class
+View\ReportsView$5.class
 Model\Utils\SortingAlgorithm.class
 Model\Utils\SortingResults.class
 View\AdminView$5.class
@@ -78,6 +80,7 @@ View\AdminView$2.class
 Model\Ingredients.class
 View\DishesInputView$2.class
 View\DishesInputView.class
+Model\Threads\SortingThread.class
 View\ReportsView$2.class
 View\UpdateClientView$3.class
 View\IngredientsView$3.class
@@ -100,6 +103,7 @@ Controller\DishController.class
 View\UpdateClientView$2.class
 View\DishesView$2.class
 View\DishesInputView$3.class
+View\ReportsView$5$1.class
 View\RegisterView$4.class
 View\DishesProgressView$3.class
 View\ClientView$2.class

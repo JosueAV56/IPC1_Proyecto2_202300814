@@ -12,10 +12,13 @@ import Model.Utils.SortingAlgorithm;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -113,7 +116,7 @@ public class ReportsView extends javax.swing.JDialog {
 
         jLabel3.setText("Ordenamiento");
 
-        timeLbl.setText("jLabel4");
+        timeLbl.setText("Tiempo:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -142,7 +145,7 @@ public class ReportsView extends javax.swing.JDialog {
                             .addComponent(jLabel2)
                             .addComponent(speedCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(reportButton)
-                            .addComponent(timeLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(timeLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(293, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -224,49 +227,6 @@ public class ReportsView extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_returnButtonActionPerformed
-
-    private void generateReport() {
-        try {
-            String reportType = (String) typeCmb.getSelectedItem();
-            SortingAlgorithm algorithm = (SortingAlgorithm) sortingAlgorithmCmb.getSelectedItem();
-            OrderSpeed speed = (OrderSpeed) speedCmb.getSelectedItem();
-            
-            if (reportType == null || algorithm == null || speed == null) {
-                JOptionPane.showMessageDialog(this, 
-                    "Por favor seleccione todos los parámetros necesarios", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            switch (reportType) {
-                case "Clientes por tipo":
-                    showClientsByTypeChart(algorithm, speed);
-                    break;
-                case "Top 10 ingredientes más usados":
-                    showMostUsedIngredientsChart(algorithm, speed);
-                    break;
-                case "Top 10 ingredientes más caros":
-                    showMostExpensiveIngredientsChart(algorithm, speed);
-                    break;
-                case "Top 10 platillos más pedidos":
-                    showMostOrderedDishesChart(algorithm, speed);
-                    break;
-                case "Top 5 clientes con más pedidos":
-                    showTop5ClientsChart(algorithm, speed);
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(this, 
-                        "Tipo de reporte no reconocido", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Error al generar el reporte: " + e.getMessage(), 
-                "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
     private void generateReportPDF(String filePath) {
         try {
             String reportType = (String) typeCmb.getSelectedItem();
@@ -304,44 +264,43 @@ public class ReportsView extends javax.swing.JDialog {
             throw new RuntimeException("Error generando PDF: " + e.getMessage(), e);
         }
     }
-
-    private void showClientsByTypeChart(SortingAlgorithm algorithm, OrderSpeed speed) {
+    private void generateReport() {
         try {
-            DefaultPieDataset dataset = new DefaultPieDataset();
+            String reportType = (String) typeCmb.getSelectedItem();
+            SortingAlgorithm algorithm = (SortingAlgorithm) sortingAlgorithmCmb.getSelectedItem();
+            OrderSpeed speed = (OrderSpeed) speedCmb.getSelectedItem();
             
-            int goldClients = mainController.getClientController().countClientsByType(TypeClient.GOLD);
-            int normalClients = mainController.getClientController().countClientsByType(TypeClient.COMMUN);
-            
-            if (goldClients == 0 && normalClients == 0) {
+            if (reportType == null || algorithm == null || speed == null) {
                 JOptionPane.showMessageDialog(this, 
-                    "No hay clientes registrados para mostrar", 
-                    "Sin datos", JOptionPane.INFORMATION_MESSAGE);
+                    "Por favor seleccione todos los parámetros necesarios", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            dataset.setValue("Clientes Oro", goldClients);
-            dataset.setValue("Clientes Normales", normalClients);
-            
-            JFreeChart chart = ChartFactory.createPieChart(
-                "Distribución de Clientes por Tipo", 
-                dataset, 
-                true, true, false);
-            
-            PiePlot plot = (PiePlot) chart.getPlot();
-            plot.setSectionPaint("Clientes Oro", new Color(255, 215, 0));
-            plot.setSectionPaint("Clientes Normales", new Color(0, 100, 200));
-            plot.setBackgroundPaint(Color.WHITE);
-            
-            currentChart = chart;
-            displayChart(chart);
-            
-            // Simular tiempo de ordenamiento para consistencia
-            sortingTime = speed.getDelayMiliSeconds() * 2;
-            timeLbl.setText("Tiempo de procesamiento: " + sortingTime + " ms");
-            
+            switch (reportType) {
+                case "Top 10 ingredientes más usados":
+                    showMostUsedIngredientsChart(algorithm, speed);
+                    break;
+                case "Top 10 ingredientes más caros":
+                    showMostExpensiveIngredientsChart(algorithm, speed);
+                    break;
+                case "Top 10 platillos más pedidos":
+                    showMostOrderedDishesChart(algorithm, speed);
+                    break;
+                case "Top 5 clientes con más pedidos":
+                    showTop5ClientsChart(algorithm, speed);
+                    break;
+                case "Clientes por tipo":
+                    showClientsByTypeChart(algorithm, speed);
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(this, 
+                        "Tipo de reporte no reconocido", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
-                "Error al generar gráfica de clientes: " + e.getMessage(), 
+                "Error al generar el reporte: " + e.getMessage(), 
                 "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -349,7 +308,6 @@ public class ReportsView extends javax.swing.JDialog {
 
     private void showMostUsedIngredientsChart(SortingAlgorithm algorithm, OrderSpeed speed) {
         try {
-            // Obtener ingredientes y sus conteos de uso
             IngredientDao dao = mainController.getIngredientController().getIngredientDao();
             ArrayList<Ingredients> ingredients = dao.getAll();
             
@@ -359,7 +317,6 @@ public class ReportsView extends javax.swing.JDialog {
                 return;
             }
             
-            // Preparar datos para animación
             double[] values = new double[ingredients.size()];
             String[] labels = new String[ingredients.size()];
             
@@ -368,11 +325,7 @@ public class ReportsView extends javax.swing.JDialog {
                 labels[i] = ingredients.get(i).getName();
             }
             
-            // Mostrar animación de ordenamiento
             showSortingAnimation(values, labels, algorithm, speed, "Top 10 Ingredientes Más Usados");
-            
-            // Después de la animación, crear la gráfica final
-            createMostUsedIngredientsChart(values, labels);
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), 
@@ -399,7 +352,6 @@ public class ReportsView extends javax.swing.JDialog {
             }
             
             showSortingAnimation(values, labels, algorithm, speed, "Top 10 Ingredientes Más Caros");
-            createMostExpensiveIngredientsChart(values, labels);
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), 
@@ -426,7 +378,6 @@ public class ReportsView extends javax.swing.JDialog {
             }
             
             showSortingAnimation(values, labels, algorithm, speed, "Top 10 Platillos Más Pedidos");
-            createMostOrderedDishesChart(values, labels);
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), 
@@ -453,19 +404,56 @@ public class ReportsView extends javax.swing.JDialog {
             }
             
             showSortingAnimation(values, labels, algorithm, speed, "Top 5 Clientes con Más Pedidos");
-            createTop5ClientsChart(values, labels);
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), 
                                         "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void showClientsByTypeChart(SortingAlgorithm algorithm, OrderSpeed speed) {
+        try {
+            int goldClients = mainController.getClientController().countClientsByType(TypeClient.GOLD);
+            int normalClients = mainController.getClientController().countClientsByType(TypeClient.COMMUN);
+            
+            if (goldClients == 0 && normalClients == 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "No hay clientes registrados para mostrar", 
+                    "Sin datos", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            DefaultPieDataset dataset = new DefaultPieDataset();
+            dataset.setValue("Clientes Oro", goldClients);
+            dataset.setValue("Clientes Normales", normalClients);
+            
+            JFreeChart chart = ChartFactory.createPieChart(
+                "Distribución de Clientes por Tipo", 
+                dataset, 
+                true, true, false);
+            
+            PiePlot plot = (PiePlot) chart.getPlot();
+            plot.setSectionPaint("Clientes Oro", new Color(255, 215, 0));
+            plot.setSectionPaint("Clientes Normales", new Color(0, 100, 200));
+            plot.setBackgroundPaint(Color.WHITE);
+            
+            currentChart = chart;
+            displayChart(chart);
+            
+            sortingTime = speed.getDelayMiliSeconds() * 2;
+            timeLbl.setText("Tiempo de procesamiento: " + sortingTime + " ms");
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Error al generar gráfica de clientes: " + e.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
-    private void showSortingAnimation(double[] values, String[] labels, SortingAlgorithm algorithm, OrderSpeed speed, String title) {
-        // Limpiar panel anterior
+    private void showSortingAnimation(double[] values, String[] labels, SortingAlgorithm algorithm, 
+                                    OrderSpeed speed, String title) {
         graficPane.removeAll();
         
-        // Configurar panel de animación
         animationPane = new SortingAnimationPane(title);
         animationPane.setData(values, labels, algorithm, speed);
         
@@ -473,117 +461,68 @@ public class ReportsView extends javax.swing.JDialog {
         graficPane.revalidate();
         graficPane.repaint();
         
-        // Iniciar animación
         long startTime = System.currentTimeMillis();
         animationPane.startSorting();
         
-        // Esperar a que termine la animación (esto es simplificado)
-        javax.swing.Timer timer = new javax.swing.Timer(100, null);
-        timer.addActionListener(e -> {
-            if (!animationPane.isAnimating()) {
-                timer.stop();
-                sortingTime = System.currentTimeMillis() - startTime;
-                timeLbl.setText("Tiempo de ordenamiento: " + sortingTime + " ms");
+        Timer timer = new Timer(100, null);
+        timer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!animationPane.isAnimating()) {
+                    timer.stop();
+                    sortingTime = System.currentTimeMillis() - startTime;
+                    timeLbl.setText("Tiempo de procesamiento: " + sortingTime + " ms");
+                    
+                    Timer delayTimer = new Timer(1000, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            ((Timer)e.getSource()).stop();
+                            createFinalChart(values, labels, title);
+                        }
+                    });
+                    delayTimer.setRepeats(false);
+                    delayTimer.start();
+                }
             }
         });
         timer.start();
     }
     
-    private void createMostUsedIngredientsChart(double[] values, String[] labels) {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
-        // Tomar los top 10 (ya ordenados por la animación)
-        int limit = Math.min(10, values.length);
-        for (int i = 0; i < limit; i++) {
-            dataset.addValue(values[i], "Uso", labels[i]);
-        }
-        
-        JFreeChart chart = ChartFactory.createBarChart(
-            "Top 10 Ingredientes Más Usados",
-            "Ingrediente", "Veces utilizado",
-            dataset, PlotOrientation.VERTICAL,
-            true, true, false
-        );
-        
-        CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.WHITE);
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+    private void createFinalChart(double[] values, String[] labels, String title) {
+    double[] sortedValues = animationPane.getSortedValues();
+    String[] sortedLabels = animationPane.getSortedLabels();
+    
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    
+    int limit = title.contains("Top 5") ? Math.min(5, sortedValues.length) : Math.min(10, sortedValues.length);
+    
+    for (int i = 0; i < limit; i++) {
+        dataset.addValue(sortedValues[i], "Valor", sortedLabels[i]);
+    }
+    
+    JFreeChart chart = ChartFactory.createBarChart(
+        title,
+        "Elemento", "Valor",
+        dataset, PlotOrientation.VERTICAL,
+        true, true, false
+    );
+    
+    CategoryPlot plot = chart.getCategoryPlot();
+    plot.setBackgroundPaint(Color.WHITE);
+    BarRenderer renderer = (BarRenderer) plot.getRenderer();
+    
+    if (title.contains("Ingredientes Más Usados")) {
         renderer.setSeriesPaint(0, new Color(75, 192, 192));
-        
-        currentChart = chart;
-        displayChart(chart);
-    }
-    
-    private void createMostExpensiveIngredientsChart(double[] values, String[] labels) {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
-        int limit = Math.min(10, values.length);
-        for (int i = 0; i < limit; i++) {
-            dataset.addValue(values[i], "Precio", labels[i]);
-        }
-        
-        JFreeChart chart = ChartFactory.createBarChart(
-            "Top 10 Ingredientes Más Caros",
-            "Ingrediente", "Precio (Q)",
-            dataset, PlotOrientation.VERTICAL,
-            true, true, false
-        );
-        
-        CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.WHITE);
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+    } else if (title.contains("Ingredientes Más Caros")) {
         renderer.setSeriesPaint(0, new Color(192, 80, 77));
-        
-        currentChart = chart;
-        displayChart(chart);
-    }
-    
-    private void createMostOrderedDishesChart(double[] values, String[] labels) {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
-        int limit = Math.min(10, values.length);
-        for (int i = 0; i < limit; i++) {
-            dataset.addValue(values[i], "Pedidos", labels[i]);
-        }
-        
-        JFreeChart chart = ChartFactory.createBarChart(
-            "Top 10 Platillos Más Pedidos",
-            "Platillo", "Veces ordenado",
-            dataset, PlotOrientation.VERTICAL,
-            true, true, false
-        );
-        
-        CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.WHITE);
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+    } else if (title.contains("Platillos")) {
         renderer.setSeriesPaint(0, new Color(155, 187, 89));
-        
-        currentChart = chart;
-        displayChart(chart);
+    } else {
+        renderer.setSeriesPaint(0, new Color(128, 100, 162));
     }
     
-    private void createTop5ClientsChart(double[] values, String[] labels) {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
-        int limit = Math.min(5, values.length);
-        for (int i = 0; i < limit; i++) {
-            dataset.addValue(values[i], "Pedidos", labels[i]);
-        }
-        
-        JFreeChart chart = ChartFactory.createBarChart(
-            "Top 5 Clientes con Más Pedidos",
-            "Cliente", "Platillos pagados",
-            dataset, PlotOrientation.VERTICAL,
-            true, true, false
-        );
-        
-        CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.WHITE);
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setSeriesPaint(0, new Color(128, 100, 162));
-        
-        currentChart = chart;
-        displayChart(chart);
+    currentChart = chart;
+    displayChart(chart);
     }
 
     private void displayChart(JFreeChart chart) {
@@ -593,7 +532,7 @@ public class ReportsView extends javax.swing.JDialog {
             }
             
             currentChartPanel = new ChartPanel(chart);
-            currentChartPanel.setPreferredSize(new Dimension(800, 350));
+            currentChartPanel.setPreferredSize(new Dimension(800, 400));
             currentChartPanel.setMouseWheelEnabled(true);
             currentChartPanel.setMouseZoomable(true);
             
@@ -603,18 +542,12 @@ public class ReportsView extends javax.swing.JDialog {
             graficPane.revalidate();
             graficPane.repaint();
             
-            this.revalidate();
-            this.repaint();
-            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
                 "Error al mostrar la gráfica: " + e.getMessage(), 
                 "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
     }
-    
-    
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel graficPane;

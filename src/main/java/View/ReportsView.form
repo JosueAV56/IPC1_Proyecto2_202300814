@@ -59,7 +59,7 @@
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                               <Component id="speedCmb" min="-2" pref="240" max="-2" attributes="0"/>
                               <Component id="reportButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="timeLbl" min="-2" pref="37" max="-2" attributes="0"/>
+                              <Component id="timeLbl" alignment="0" min="-2" pref="281" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -185,7 +185,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="timeLbl">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jLabel4"/>
+            <Property name="text" type="java.lang.String" value="Tiempo:"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -24,14 +24,13 @@ public class ClientView extends javax.swing.JFrame {
         this.client = client;
         initComponents();
         setupClientData();
+
     }
  
     private void setupClientData() {
-        // Configurar mensaje de bienvenida
         welcomeLabel.setText("Bienvenido a Restaurante USAC " + client.getCompleteName());
         nameUserLabel.setText(client.getUser());
         
-        // Cargar foto del usuario
         try {
             if (client.getPhotoPath() != null && !client.getPhotoPath().isEmpty()) {
                 ImageIcon icon = new ImageIcon(client.getPhotoPath());
@@ -63,12 +62,13 @@ public class ClientView extends javax.swing.JFrame {
         welcomeLabel = new javax.swing.JLabel();
         photoUserPanel = new javax.swing.JPanel();
         nameUserLabel = new javax.swing.JLabel();
-        iconPane = new javax.swing.JPanel();
         enterDishesButton = new javax.swing.JButton();
         billButton = new javax.swing.JButton();
         logoutBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(0, 153, 153));
 
         welcomeLabel.setText("jLabel1");
 
@@ -84,17 +84,6 @@ public class ClientView extends javax.swing.JFrame {
         );
 
         nameUserLabel.setText("jLabel2");
-
-        javax.swing.GroupLayout iconPaneLayout = new javax.swing.GroupLayout(iconPane);
-        iconPane.setLayout(iconPaneLayout);
-        iconPaneLayout.setHorizontalGroup(
-            iconPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 221, Short.MAX_VALUE)
-        );
-        iconPaneLayout.setVerticalGroup(
-            iconPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 154, Short.MAX_VALUE)
-        );
 
         enterDishesButton.setText("Ingresar Platillos");
         enterDishesButton.addActionListener(new java.awt.event.ActionListener() {
@@ -121,52 +110,46 @@ public class ClientView extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(118, 118, 118)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(billButton, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(enterDishesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nameUserLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(41, 41, 41)))
+                        .addGap(24, 24, 24))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(iconPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(61, 61, 61)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(photoUserPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nameUserLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)))
-                .addGap(24, 24, 24))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(112, 112, 112)
-                .addComponent(enterDishesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(154, 154, 154)
-                .addComponent(billButton, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(112, Short.MAX_VALUE))
+                        .addGap(66, 66, 66)
+                        .addComponent(photoUserPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(69, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
+                        .addGap(47, 47, 47)
                         .addComponent(photoUserPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39)
+                        .addGap(22, 22, 22)
                         .addComponent(nameUserLabel)
                         .addGap(18, 18, 18)
                         .addComponent(logoutBtn)
-                        .addGap(126, 126, 126))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
+                        .addGap(66, 66, 66)
                         .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(iconPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(enterDishesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(billButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(76, Short.MAX_VALUE))
+                        .addComponent(enterDishesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(58, 58, 58)))
+                .addComponent(billButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(98, 98, 98))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -201,7 +184,6 @@ public class ClientView extends javax.swing.JFrame {
         // TODO add your handling code here:
      ArrayList<WorkOrder> clientOrders = mainController.getOrderController().getOrderDao().getOrdersByClient(client);
     
-    //Filtrar solo las órdenes listas (READY)
     ArrayList<WorkOrder> readyOrders = new ArrayList<>();
     for (WorkOrder order : clientOrders) {
         if (order.getOrderStatus() == OrderStatus.READY) {
@@ -209,7 +191,6 @@ public class ClientView extends javax.swing.JFrame {
         }
     }
     
-    // para debug
     if (readyOrders.isEmpty()) {
         StringBuilder message = new StringBuilder();
         message.append("No hay órdenes listas para facturar.\n");
@@ -228,22 +209,17 @@ public class ClientView extends javax.swing.JFrame {
         return;
     }
     
-    // Crear número de factura único
     int billNumber = (int) System.currentTimeMillis() % 1000000;
     
-    // 5. Crear y configurar la factura
     Bill newBill = new Bill(billNumber, client);
     for (WorkOrder order : readyOrders) {
         newBill.addOrder(order);
-        // Actualizar estado a PAID
         order.setOrderStatus(OrderStatus.PAID);
     }
     newBill.calculateOverall();
-    newBill.payBill(); // Esto actualiza también el contador del cliente
+    newBill.payBill(); 
     
-    // Generar PDF
     try {
-        // Crear directorio
         new File("facturas").mkdirs();
         
         String pdfPath = "facturas/Factura_" + billNumber + "_" + client.getDpi() + ".pdf";
@@ -268,7 +244,6 @@ public class ClientView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton billButton;
     private javax.swing.JButton enterDishesButton;
-    private javax.swing.JPanel iconPane;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton logoutBtn;
     private javax.swing.JLabel nameUserLabel;

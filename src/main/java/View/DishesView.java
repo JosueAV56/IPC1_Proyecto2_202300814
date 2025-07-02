@@ -63,6 +63,8 @@ public class DishesView extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 153));
+
         jLabel1.setText("Platillos en Stock");
 
         dishesTbl.setModel(new javax.swing.table.DefaultTableModel(
