@@ -30,9 +30,9 @@ public class MainController {
     private final OrderDao orderDao;
     private final EmployeeDao employeeDao;
     private final BillManager billManager;
-    private final ThreadManager threadManager; // Una sola instancia compartida
+    private final ThreadManager threadManager; 
     
-    // Controladores
+    
     private final AdminController adminController;
     private final ClientController clientController;
     private final DishController dishController;
@@ -44,7 +44,7 @@ public class MainController {
     public MainController() throws InterruptedException {
         System.out.println("[MainController] Inicializando MainController...");
         
-        // Inicialización de DAOs y Managers
+        
         this.ingredientDao = new IngredientDao();
         this.dishesDao = new DishesDao();
         this.clientDao = new ClientDao();
@@ -68,28 +68,28 @@ public class MainController {
     private void initializeSystem() throws InterruptedException {
         System.out.println("[MainController] Iniciando sistema...");
         
-        // 1. Crear directorio data si no existe
+        
         new File("data/").mkdirs();
         
-        // 2. Cargar datos existentes
+        
         loadPersistentData();
         
-        // 3. Inicializar datos por defecto si es necesario
+        
         if (isFirstExecution()) {
             initializeDefaultData();
         }
         
-        // 4. Calcular precios de platillos
+        
         dishController.calculateDishesPrices();
         
-        // 5. Cargar chefs en el ThreadManager
+
         loadChefsIntoThreadManager();
         
-        // 6. Iniciar hilos del sistema
+
         System.out.println("[MainController] Iniciando hilos del sistema...");
         threadManager.startKitchenThreads();
         
-        // 7. Verificar estado del sistema
+
         threadManager.printSystemStatus();
         
         System.out.println("[MainController] ✅ Sistema inicializado correctamente");
@@ -120,12 +120,11 @@ public class MainController {
         try {
             System.out.println("[MainController] Inicializando datos por defecto...");
             
-            // 1. Crear admin por defecto
             Client adminClient = new Client("0000000000000", "Administrador", 
                                           "admin", "admin", "", TypeClient.COMMUN);
             clientDao.create(adminClient);
             
-            // 2. Crear chefs por defecto y guardarlos en EmployeeDao
+
             Employee chef1 = new Employee(1, "Dulce Martínez", EmployeeType.CHEF);
             Employee chef2 = new Employee(2, "Álvaro Morales", EmployeeType.CHEF);
             
@@ -134,7 +133,7 @@ public class MainController {
             
             System.out.println("[MainController] Chefs creados y guardados en EmployeeDao");
             
-            // 3. Guardar datos iniciales
+
             savePersistentData();
             
         } catch (Exception e) {
@@ -150,9 +149,9 @@ public class MainController {
     System.out.println("[MainController] Chefs encontrados en EmployeeDao: " + chefs.size());
     
     if (chefs.isEmpty()) {
-        System.out.println("[MainController] ⚠️ No se encontraron chefs, creando chefs por defecto");
+        System.out.println("[MainController] ️ No se encontraron chefs, creando chefs por defecto");
         
-        // Crear chefs por defecto si no existen
+    
         Employee chef1 = new Employee(1, "Dulce Martínez", EmployeeType.CHEF);
         Employee chef2 = new Employee(2, "Álvaro Morales", EmployeeType.CHEF);
         
@@ -163,9 +162,9 @@ public class MainController {
         System.out.println("[MainController] Chefs por defecto creados: " + chefs.size());
     }
     
-    // Inicializar ThreadManager con los chefs
+
     threadManager.initializeWithChefs(chefs);
-    System.out.println("[MainController] ✅ ThreadManager inicializado con " + chefs.size() + " chefs");
+    System.out.println("[MainController]  ThreadManager inicializado con " + chefs.size() + " chefs");
 }
     
     public void savePersistentData() {
@@ -186,17 +185,17 @@ public class MainController {
     // NUEVO: Método para obtener el ThreadManager directamente
     public ThreadManager getThreadManager() {
         if (threadManager == null) {
-            System.err.println("[MainController] ⚠️ ThreadManager es null!");
+            System.err.println("[MainController] ️ ThreadManager es null!");
         }
         return threadManager;
     }
     
-    // Getter para EmployeeDao
+
     public EmployeeDao getEmployeeDao() {
         return employeeDao;
     }
     
-    // Métodos para obtener controladores
+
     public AdminController getAdminController() { return adminController; }
     public ClientController getClientController() { return clientController; }
     public DishController getDishController() { return dishController; }
@@ -205,7 +204,7 @@ public class MainController {
     public FileController getFileController() { return fileController; }
     public ReportController getReportController() { return reportController; }
     
-    // Método para iniciar la aplicación
+  
     public void startApplication() {
         SwingUtilities.invokeLater(() -> {
             LoginView loginView = new LoginView(this);
@@ -213,19 +212,19 @@ public class MainController {
         });
     }
     
-    // Método para cerrar la aplicación
+
     public void shutdown() {
         System.out.println("[MainController] Cerrando aplicación...");
         
-        // 1. Detener hilos del sistema
+
         if (threadManager != null) {
             threadManager.stopSystem();
         }
         
-        // 2. Guardar datos persistentes
+
         savePersistentData();
         
-        // 3. Salir
+
         System.out.println("[MainController] ✅ Aplicación cerrada correctamente");
         System.exit(0);
     }

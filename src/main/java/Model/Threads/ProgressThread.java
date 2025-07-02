@@ -32,12 +32,10 @@ public class ProgressThread extends Thread{
                 ArrayList<WorkOrder> currentOrders = orderDao.getOrdersByClient(client);
                 System.out.println("[ProgressThread] Órdenes encontradas: " + (currentOrders != null ? currentOrders.size() : 0));
                 
-                // loggear el estado actual
                 if (currentOrders != null && !currentOrders.isEmpty()) {
                     logOrdersStatus(currentOrders);
                 }
                 
-                // procesar si hay cambios reales
                 if (hasOrdersChanged(currentOrders)) {
                     System.out.println("[ProgressThread]  CAMBIOS DETECTADOS en órdenes");
                     lastOrders = currentOrders != null ? new ArrayList<>(currentOrders) : new ArrayList<>();
@@ -50,7 +48,6 @@ public class ProgressThread extends Thread{
                         System.out.println("[ProgressThread]  LISTENER ES NULL");
                     }
                     
-                    // Verificar si todas las órdenes están completas
                     if (allOrdersCompleted(currentOrders)) {
                         System.out.println("[ProgressThread]  Todas las órdenes completadas");
                         break;
@@ -116,7 +113,6 @@ public class ProgressThread extends Thread{
             return true;
         }
         
-        // Verificar cambios en el estado de las órdenes
         for (WorkOrder current : currentOrders) {
             boolean found = false;
             for (WorkOrder last : lastOrders) {

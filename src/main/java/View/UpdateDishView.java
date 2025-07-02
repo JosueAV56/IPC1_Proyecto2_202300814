@@ -25,7 +25,6 @@ public class UpdateDishView extends javax.swing.JDialog {
             idTxt.setText(String.valueOf(currentDish.getIdentifier()));
             dishNameTxt.setText(currentDish.getName());
             
-            // Convertir lista de IDs a string separado por ;
             String ingredientsList = String.join(";", 
                 currentDish.getIngredientsId()
                     .stream()
@@ -149,7 +148,6 @@ public class UpdateDishView extends javax.swing.JDialog {
         String[] ingredientIds = ingredientsTxt.getText().split(";");
         double laborPrice = Double.parseDouble(labourPriceTxt.getText());
         
-        // Validar ingredientes
         ArrayList<Integer> validIngredientIds = new ArrayList<>();
         StringBuilder invalidIngredients = new StringBuilder();
         
@@ -170,12 +168,10 @@ public class UpdateDishView extends javax.swing.JDialog {
             return;
         }
         
-        // Actualizar platillo
         currentDish.setName(name);
         currentDish.setIngredientsId(validIngredientIds);
         currentDish.setLaborPrice(laborPrice);
         
-        // Calcular precio con ingredientes actuales
         ArrayList<Ingredients> ingredients = mainController.getIngredientController()
             .getIngredientsByIds(validIngredientIds);
         currentDish.calculateTotalPrice(ingredients);

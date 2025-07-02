@@ -19,7 +19,7 @@ public class KitchenThread extends Thread {
         this.chef = chef;
         this.orderDao = orderDao;
         this.setName("Cocina Thread-" + chef.getName());
-        System.out.println("[KitchenThread] ✅ Cocinero " + chef.getName() + " inicializado (ID: " + chef.getId() + ")");
+        System.out.println("[KitchenThread]  Cocinero " + chef.getName() + " inicializado (ID: " + chef.getId() + ")");
     }
     
     public void setProgressListener(ProgressThread.ProgressUpdateListener listener) {
@@ -29,7 +29,7 @@ public class KitchenThread extends Thread {
     
     @Override
     public void run(){
-        System.out.println("[KitchenThread] ✅ INICIANDO hilo para chef: " + chef.getName() + " (ID: " + chef.getId() + ")");
+        System.out.println("[KitchenThread]  INICIANDO hilo para chef: " + chef.getName() + " (ID: " + chef.getId() + ")");
 
         while(running && !Thread.currentThread().isInterrupted()) {
             try {
@@ -57,7 +57,7 @@ public class KitchenThread extends Thread {
                     canTake = chef.canTakeOrder();
                     System.out.println("[KitchenThread] " + chef.getName() + " puede tomar orden: " + canTake);
                 } catch (Exception e) {
-                    System.err.println("[KitchenThread] ❌ ERROR en canTakeOrder() para chef " + 
+                    System.err.println("[KitchenThread]  ERROR en canTakeOrder() para chef " + 
                                      chef.getName() + ": " + e.getMessage());
                     e.printStackTrace();
                     Thread.sleep(VERIFICATION_TIME);
@@ -73,7 +73,6 @@ public class KitchenThread extends Thread {
                                              " (Chef asignado: " + (chefCurrentOrder.getEmployee() != null ? 
                                              chefCurrentOrder.getEmployee().getName() : "NINGUNO") + ")");
                             
-                            // Sync local state with chef state
                             if (currentOrder == null || currentOrder.getOrderNumber() != chefCurrentOrder.getOrderNumber()) {
                                 System.out.println("[KitchenThread]️ Sincronizando estado local con chef");
                                 currentOrder = chefCurrentOrder;
@@ -89,7 +88,7 @@ public class KitchenThread extends Thread {
                 }
                 
                 if (orderDao == null) {
-                    System.err.println("[KitchenThread] ❌ ERROR CRÍTICO: OrderDao es null");
+                    System.err.println("[KitchenThread] ERROR CRÍTICO: OrderDao es null");
                     break;
                 }
                 
@@ -101,7 +100,6 @@ public class KitchenThread extends Thread {
                     System.out.println("[KitchenThread] " + chef.getName() + " buscando siguiente orden...");
                     
                     synchronized(orderLock) {
-                        // Double-check chef availability
                         if (!chef.canTakeOrder()) {
                             System.out.println("[KitchenThread] " + chef.getName() + " ya no puede tomar órdenes después de sincronización");
                             continue;
@@ -130,7 +128,6 @@ public class KitchenThread extends Thread {
                                     System.err.println("[KitchenThread] ❌ ERROR: Asignación no se reflejó en chef");
                                 }
                                 
-                                // Process the order outside the synchronized block
                                 try {
                                     processOrder(nextOrder);
                                 } catch (Exception e) {
@@ -147,7 +144,6 @@ public class KitchenThread extends Thread {
                                 System.out.println("[KitchenThread] ❌ FALLO: No se pudo asignar orden #" + nextOrder.getOrderNumber() + 
                                                  " a " + chef.getName() + " - podría estar ya asignada");
                                 
-                                // Debug
                                 if (nextOrder.getEmployee() != null) {
                                     System.out.println("[KitchenThread] Orden #" + nextOrder.getOrderNumber() + 
                                                      " está asignada a: " + nextOrder.getEmployee().getName() + 
@@ -171,7 +167,6 @@ public class KitchenThread extends Thread {
                                  (chef != null ? chef.getName() : "NULL") + ": " + e.getMessage());
                 e.printStackTrace();
                 
-                // Reset state on error
                 synchronized(orderLock) {
                     currentOrder = null;
                 }
@@ -179,7 +174,6 @@ public class KitchenThread extends Thread {
                     chef.endOrder();
                 }
                 
-                // evitar bucle infinito de errores
                 try {
                     Thread.sleep(VERIFICATION_TIME);
                 } catch (InterruptedException ie) {
@@ -189,7 +183,6 @@ public class KitchenThread extends Thread {
             }
         }
         
-        // Clean up on exit
         synchronized(orderLock) {
             currentOrder = null;
         }
@@ -206,7 +199,7 @@ public class KitchenThread extends Thread {
                          (order != null ? order.getOrderNumber() : "NULL") + " CON CHEF " + chef.getName() + " ===");
         
         if (order == null) {
-            System.err.println("[KitchenThread] ❌ ERROR: Orden nula");
+            System.err.println("[KitchenThread] ERROR: Orden nula");
             return;
         }
         
@@ -216,17 +209,17 @@ public class KitchenThread extends Thread {
         }
         
         if (chef == null) {
-            System.err.println("[KitchenThread] ❌ ERROR: Chef nulo");
+            System.err.println("[KitchenThread] ERROR: Chef nulo");
             return;
         }
 
         try {
             System.out.println("[KitchenThread] Verificando asignación de orden #" + order.getOrderNumber() + " a " + chef.getName());
             if (!orderDao.isOrderAssignedToChef(order, chef)) {
-                System.out.println("[KitchenThread] ⚠️ Orden #" + order.getOrderNumber() + " ya no está asignada a " + chef.getName());
+                System.out.println("[KitchenThread]️ Orden #" + order.getOrderNumber() + " ya no está asignada a " + chef.getName());
                 return;
             }
-            System.out.println("[KitchenThread] ✅ Orden #" + order.getOrderNumber() + " confirmada para " + chef.getName());
+            System.out.println("[KitchenThread] Orden #" + order.getOrderNumber() + " confirmada para " + chef.getName());
 
             // 1. Fase de espera en cola (solo si es cliente normal)
             if (!order.hasGoldClient()) {
@@ -238,7 +231,7 @@ public class KitchenThread extends Thread {
                     if (!running) return;
                     
                     if (!orderDao.isOrderAssignedToChef(order, chef)) {
-                        System.out.println("[KitchenThread] ⚠️ Orden reassignada durante procesamiento - abortando");
+                        System.out.println("[KitchenThread]️ Orden reassignada durante procesamiento - abortando");
                         return;
                     }
                     
@@ -246,26 +239,26 @@ public class KitchenThread extends Thread {
                     if (i < 100) Thread.sleep(updateInterval);
                 }
             } else {
-                System.out.println("[KitchenThread] 🥇 Cliente Oro detectado - Prioridad a orden #" + order.getOrderNumber());
+                System.out.println("[KitchenThread]  Cliente Oro detectado - Prioridad a orden #" + order.getOrderNumber());
                 updateProgressBar(order, OrderStatus.QUEUE_WAIT, 100);
                 Thread.sleep(100);
             }
 
             // Verificar que la orden sigue asignada a este chef
             if (!orderDao.isOrderAssignedToChef(order, chef)) {
-                System.out.println("[KitchenThread] ⚠️ Orden ya no está asignada a este chef");
+                System.out.println("[KitchenThread]️ Orden ya no está asignada a este chef");
                 return;
             }
 
             // Mover la orden a cocina
             System.out.println("[KitchenThread] Moviendo orden #" + order.getOrderNumber() + " a cocina");
             if (!orderDao.moveToKitchen(order, chef)) {
-                System.err.println("[KitchenThread] ❌ Error al mover orden #" + order.getOrderNumber() + " a cocina");
+                System.err.println("[KitchenThread] Error al mover orden #" + order.getOrderNumber() + " a cocina");
                 return;
             }
 
             // Fase de preparación en cocina
-            System.out.println("[KitchenThread] ✅ Orden #" + order.getOrderNumber() + " siendo preparada por " + chef.getName());
+            System.out.println("[KitchenThread] Orden #" + order.getOrderNumber() + " siendo preparada por " + chef.getName());
             int cookingTimeMs = OrderStatus.IN_KITCHEN.getMillisecondsTime();
             int updateInterval = Math.max(cookingTimeMs / 100, 10);
             
@@ -273,7 +266,7 @@ public class KitchenThread extends Thread {
                 if (!running) return;
                 
                 if (!orderDao.isOrderAssignedToChef(order, chef)) {
-                    System.out.println("[KitchenThread] ⚠️ Orden reassignada durante cocción - abortando");
+                    System.out.println("[KitchenThread] ️ Orden reassignada durante cocción - abortando");
                     return;
                 }
                 
@@ -287,7 +280,6 @@ public class KitchenThread extends Thread {
                 return;
             }
 
-            // mostrar progreso de "Listo"
             System.out.println("[KitchenThread] Mostrando progreso de listo para orden #" + order.getOrderNumber());
             int readyTimeMs = OrderStatus.READY.getMillisecondsTime();
             updateInterval = Math.max(readyTimeMs / 100, 10);
@@ -298,7 +290,6 @@ public class KitchenThread extends Thread {
                 if (i < 100) Thread.sleep(updateInterval);
             }
 
-            // Notificar que está lista para facturar
             if (listener != null) {
                 System.out.println("[KitchenThread] Notificando factura pendiente para orden #" + order.getOrderNumber());
                 listener.onInvoicePending(order);
@@ -310,7 +301,6 @@ public class KitchenThread extends Thread {
             System.err.println("[KitchenThread]  ERROR procesando orden #" + order.getOrderNumber() + ": " + e.getMessage());
             e.printStackTrace();
             
-            // Liberar al chef en caso de error
             if (chef != null) {
                 chef.endOrder();
             }

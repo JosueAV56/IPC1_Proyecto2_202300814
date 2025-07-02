@@ -54,7 +54,6 @@ public enum OrderStatus {
         return secondsTime;
     }
     
-    // NUEVO: Método para obtener tiempo en milisegundos
     public int getMillisecondsTime() {
         return secondsTime * 1000;
     }

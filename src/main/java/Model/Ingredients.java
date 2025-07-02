@@ -52,7 +52,6 @@ public class Ingredients implements Serializable,Comparable<Ingredients> {
     
     
     public int compareTo(Ingredients other) {
-        // Ordenar por precio (descendente)
         return Double.compare(other.getPrice(), this.getPrice());
     }
 

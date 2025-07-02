@@ -44,7 +44,7 @@ public class SortingThread extends Thread {
             }
             
             long endTime = System.nanoTime();
-            long executionTime = (endTime - startTime) / 1_000_000; // Convertir a milisegundos
+            long executionTime = (endTime - startTime) / 1_000_000;
             
             if (callback != null) {
                 callback.onSortingComplete(new ArrayList<>(data), executionTime);

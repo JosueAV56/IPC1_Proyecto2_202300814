@@ -18,27 +18,23 @@ public class SortingAnimationPane extends JPanel {
     private String title;
     private Timer animationTimer;
     private boolean isAnimating = false;
-    
-    // Variables para el estado del ordenamiento
-    private int currentI = 0;
+        private int currentI = 0;
     private int currentJ = 0;
     private int phase = 0;
     private boolean sortingComplete = false;
     
-    // Colores para la visualización
     private final Color DEFAULT_COLOR = new Color(100, 149, 237);
     private final Color COMPARING_COLOR = new Color(255, 99, 71);
     private final Color SORTED_COLOR = new Color(50, 205, 50);
     private final Color PIVOT_COLOR = new Color(255, 215, 0);
     
-    // Variables para QuickSort original (mantenidas para compatibilidad)
     private int[] quickSortStack;
     private int stackTop = -1;
     private int pivotIndex = -1;
     private int partitionLow = 0;
     private int partitionHigh = 0;
     
-    // Variables adicionales para QuickSort simplificado
+
     private int quickSortStep = 0;
     private int[] sortingIndices;
     private boolean[] processedRanges;
@@ -56,23 +52,22 @@ public class SortingAnimationPane extends JPanel {
         this.labels = Arrays.copyOf(labels, labels.length);
         this.algorithm = algorithm;
         this.speed = speed;
-        
-        // Resetear variables de estado
+
         currentI = 0;
         currentJ = 0;
         phase = 0;
         sortingComplete = false;
         pivotIndex = -1;
         
-        // Inicializar para QuickSort
+
         if (algorithm == SortingAlgorithm.QUICK_SORT) {
-            // Configuración original (mantenida para compatibilidad)
+
             quickSortStack = new int[values.length * 2];
             stackTop = -1;
-            // Agregar rango inicial al stack
+
             pushToStack(0, values.length - 1);
             
-            // Nueva configuración simplificada
+
             quickSortStep = 0;
             sortingIndices = new int[values.length];
             for (int i = 0; i < values.length; i++) {
@@ -137,7 +132,6 @@ public class SortingAnimationPane extends JPanel {
             return;
         }
         
-        // Comparar y intercambiar si es necesario (orden descendente)
         if (values[currentJ] < values[currentJ + 1]) {
             swap(currentJ, currentJ + 1);
         }
@@ -145,23 +139,21 @@ public class SortingAnimationPane extends JPanel {
         currentJ++;
     }
     
-    // Implementación simplificada de QuickSort step-by-step
     private void performQuickSortStepSimplified() {
         if (quickSortStep >= values.length * values.length) {
             sortingComplete = true;
             return;
         }
         
-        // Simulación paso a paso más simple
         boolean swapped = false;
         for (int i = 0; i < values.length - 1; i++) {
             currentI = i;
             currentJ = i + 1;
             
-            if (values[i] < values[i + 1]) { // Orden descendente
+            if (values[i] < values[i + 1]) { 
                 swap(i, i + 1);
                 swapped = true;
-                break; // Solo un intercambio por paso para mostrar animación
+                break; 
             }
         }
         
@@ -172,7 +164,6 @@ public class SortingAnimationPane extends JPanel {
         quickSortStep++;
     }
     
-    // Implementación original de QuickSort (mantenida para referencia)
     private void performQuickSortStep() {
         if (stackTop < 0) {
             sortingComplete = true;
@@ -188,25 +179,22 @@ public class SortingAnimationPane extends JPanel {
                 pivotIndex = partitionHigh;
                 currentI = partitionLow - 1;
                 currentJ = partitionLow;
-                phase = 1; // Fase de partición
+                phase = 1; 
             } else {
-                phase = 0; // Continuar con siguiente rango
+                phase = 0; 
             }
         } else if (phase == 1) {
-            // Fase de partición
             if (currentJ < partitionHigh) {
-                // Comparar con pivot (orden descendente)
+    
                 if (values[currentJ] >= values[pivotIndex]) {
                     currentI++;
                     swap(currentI, currentJ);
                 }
                 currentJ++;
             } else {
-                // Colocar pivot en posición correcta
                 swap(currentI + 1, partitionHigh);
                 int newPivotIndex = currentI + 1;
                 
-                // Agregar sub-rangos al stack
                 if (partitionLow < newPivotIndex - 1) {
                     pushToStack(partitionLow, newPivotIndex - 1);
                 }
@@ -214,7 +202,7 @@ public class SortingAnimationPane extends JPanel {
                     pushToStack(newPivotIndex + 1, partitionHigh);
                 }
                 
-                phase = 0; // Volver a fase de selección de rango
+                phase = 0; 
                 pivotIndex = -1;
             }
         }
@@ -247,14 +235,12 @@ public class SortingAnimationPane extends JPanel {
         
         if (values == null || values.length == 0) return;
         
-        // Título
         g2d.setFont(new Font("Arial", Font.BOLD, 16));
         g2d.setColor(Color.BLACK);
         FontMetrics fm = g2d.getFontMetrics();
         int titleWidth = fm.stringWidth(title);
         g2d.drawString(title, (getWidth() - titleWidth) / 2, 30);
         
-        // Calcular dimensiones para las barras
         int margin = 50;
         int availableWidth = getWidth() - 2 * margin;
         int availableHeight = getHeight() - 100;
@@ -265,29 +251,24 @@ public class SortingAnimationPane extends JPanel {
         double maxValue = Arrays.stream(values).max().orElse(1.0);
         if (maxValue == 0) maxValue = 1.0;
         
-        // Dibujar barras
         for (int i = 0; i < values.length; i++) {
             int barHeight = (int) ((values[i] / maxValue) * availableHeight);
             int x = margin + i * (barWidth + 2);
             int y = getHeight() - margin - barHeight;
             
-            // Determinar color de la barra
             Color barColor = getBarColor(i);
             g2d.setColor(barColor);
             g2d.fillRect(x, y, barWidth, barHeight);
             
-            // Borde de la barra
             g2d.setColor(Color.BLACK);
             g2d.drawRect(x, y, barWidth, barHeight);
             
-            // Valor encima de la barra
             g2d.setFont(new Font("Arial", Font.PLAIN, 10));
             String valueStr = String.format("%.0f", values[i]);
             FontMetrics valueFm = g2d.getFontMetrics();
             int valueWidth = valueFm.stringWidth(valueStr);
             g2d.drawString(valueStr, x + (barWidth - valueWidth) / 2, y - 5);
             
-            // Etiqueta debajo de la barra (si hay espacio)
             if (labels != null && i < labels.length && barWidth > 20) {
                 g2d.setFont(new Font("Arial", Font.PLAIN, 8));
                 String label = labels[i];
@@ -298,7 +279,6 @@ public class SortingAnimationPane extends JPanel {
                 int labelWidth = labelFm.stringWidth(label);
                 int labelY = getHeight() - margin + 15;
                 
-                // Rotar texto si es necesario
                 if (barWidth < labelWidth) {
                     Graphics2D g2dRotated = (Graphics2D) g2d.create();
                     g2dRotated.rotate(-Math.PI/4, x + barWidth/2, labelY);
@@ -310,7 +290,6 @@ public class SortingAnimationPane extends JPanel {
             }
         }
         
-        // Información del algoritmo
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.PLAIN, 12));
         String info = "Algoritmo: " + algorithm.toString() + " | Velocidad: " + speed.getDescription();
@@ -340,11 +319,9 @@ public class SortingAnimationPane extends JPanel {
                 }
                 break;
             case QUICK_SORT:
-                // Para la versión simplificada, usar colores más simples
                 if (index == currentI || index == currentJ) {
                     return COMPARING_COLOR;
                 }
-                // Mantener compatibilidad con versión original
                 if (index == pivotIndex) {
                     return PIVOT_COLOR;
                 }

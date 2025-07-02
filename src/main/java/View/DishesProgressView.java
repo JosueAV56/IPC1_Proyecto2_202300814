@@ -17,12 +17,10 @@ public class DishesProgressView extends javax.swing.JFrame {
         startAutoRefresh();
     }
     private void setupTables() {
-        // Configurar modelos de tabla
         queueWaitTable.setModel(createTableModel(new String[]{"Orden", "Platillo", "Cliente", "Tipo Cliente"}));
         queueKitchenTable.setModel(createTableModel(new String[]{"Orden", "Platillo", "Cliente", "Chef Asignado"}));
         readyOrdersTable.setModel(createTableModel(new String[]{"Orden", "Platillo", "Cliente", "Total", "Atendió", "Fecha y hora"}));
         
-        // Actualizar datos iniciales
         refreshTables();
     }
     
@@ -30,13 +28,12 @@ public class DishesProgressView extends javax.swing.JFrame {
         return new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Todas las celdas no editables
+                return false;
             }
         };
     }
     
     private void startAutoRefresh() {
-        // Actualizar cada 5 segundos (5000 ms)
         refreshTimer = new javax.swing.Timer(5000, e -> refreshTables());
         refreshTimer.start();
     }
@@ -49,7 +46,7 @@ public class DishesProgressView extends javax.swing.JFrame {
     
     private void refreshWaitingOrders() {
         DefaultTableModel model = (DefaultTableModel) queueWaitTable.getModel();
-        model.setRowCount(0); // Limpiar tabla
+        model.setRowCount(0); 
         
         ArrayList<WorkOrder> waitingOrders = mainController.getOrderController().getOrdersByStatus(OrderStatus.QUEUE_WAIT);
         
@@ -65,7 +62,7 @@ public class DishesProgressView extends javax.swing.JFrame {
     
     private void refreshKitchenOrders() {
         DefaultTableModel model = (DefaultTableModel) queueKitchenTable.getModel();
-        model.setRowCount(0); // Limpiar tabla
+        model.setRowCount(0); 
         
         ArrayList<WorkOrder> kitchenOrders = mainController.getOrderController().getOrdersByStatus(OrderStatus.IN_KITCHEN);
         
@@ -81,7 +78,7 @@ public class DishesProgressView extends javax.swing.JFrame {
     
     private void refreshReadyOrders() {
         DefaultTableModel model = (DefaultTableModel) readyOrdersTable.getModel();
-        model.setRowCount(0); // Limpiar tabla
+        model.setRowCount(0); 
         
         ArrayList<WorkOrder> readyOrders = mainController.getOrderController().getOrdersByStatus(OrderStatus.READY);
         

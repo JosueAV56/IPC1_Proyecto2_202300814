@@ -133,11 +133,10 @@ public class IngredientDao {
     }
     
     
-     // Métodos para reportes
     public synchronized ArrayList<Ingredients> getTop10MostExpensive() {
         ArrayList<Ingredients> ingredientesOrdenados = new ArrayList<>(ingredients);
         
-        // Ordenamiento burbuja por precio (descendente)
+        // Ordenamiento (descendente)
         for (int i = 0; i < ingredientesOrdenados.size() - 1; i++) {
             for (int j = 0; j < ingredientesOrdenados.size() - i - 1; j++) {
                 if (ingredientesOrdenados.get(j).getPrice() < 
@@ -149,7 +148,6 @@ public class IngredientDao {
             }
         }
         
-        // Retornar solo los primeros 10
         ArrayList<Ingredients> top10 = new ArrayList<>();
         int limite = Math.min(10, ingredientesOrdenados.size());
         for (int i = 0; i < limite; i++) {
@@ -207,12 +205,10 @@ public class IngredientDao {
         }
     }
     
-    // Método para obtener la lista interna (para serialización)
     public synchronized ArrayList<Ingredients> getListaInterna() {
         return ingredients;
     }
     
-    // Método para establecer la lista interna (para deserialización)
     public synchronized void setListaInterna(ArrayList<Ingredients> ingredientes) {
         this.ingredients = ingredientes != null ? ingredientes : new ArrayList<>();
     }

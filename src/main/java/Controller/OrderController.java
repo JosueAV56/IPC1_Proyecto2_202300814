@@ -14,10 +14,10 @@ public class OrderController {
     
     public OrderController(OrderDao orderDao) {
         this.orderDao = orderDao;
-        this.threadManager = new ThreadManager(orderDao); // Inicializar automáticamente
+        this.threadManager = new ThreadManager(orderDao);
     }
     
-    // Constructor alternativo si ya tienes un ThreadManager
+
     public OrderController(OrderDao orderDao, ThreadManager threadManager) {
         this.orderDao = orderDao;
         this.threadManager = threadManager;
@@ -79,7 +79,7 @@ public class OrderController {
     }
     
     public ThreadManager getThreadManager() {
-        // Lazy initialization como respaldo
+ 
         if (threadManager == null) {
             threadManager = new ThreadManager(orderDao);
         }

@@ -26,8 +26,7 @@ public class DishesView extends javax.swing.JDialog {
     }
     
     private void loadDishes() {
-    tableModel.setRowCount(0); // Limpiar tabla
-    // Calcular precios primero
+    tableModel.setRowCount(0); 
     mainController.getDishController().calculateDishesPrices();
     
     ArrayList<Dishes> dishes = mainController.getDishController().getAllDishes();

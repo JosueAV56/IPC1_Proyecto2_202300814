@@ -42,14 +42,14 @@ public class OrderDao {
             
             if (order.hasGoldClient()) {
                 waitingQueue.addFirst(order);
-                System.out.println("[OrderDao] ✅ Orden oro #" + order.getOrderNumber() + " creada (prioridad)");
+                System.out.println("[OrderDao]  Orden oro #" + order.getOrderNumber() + " creada (prioridad)");
             } else {
                 waitingQueue.addLast(order);
-                System.out.println("[OrderDao] ✅ Orden #" + order.getOrderNumber() + " creada");
+                System.out.println("[OrderDao]  Orden #" + order.getOrderNumber() + " creada");
             }
             return true;
         }
-        System.out.println("[OrderDao] ❌ Error: Orden nula");
+        System.out.println("[OrderDao]  Error: Orden nula");
         return false;
     }
 
@@ -167,14 +167,14 @@ public class OrderDao {
     
     public synchronized WorkOrder getNextWaitingOrder() {
     if (!waitingQueue.isEmpty()) {
-        // Priorizar clientes oro
+
         for (WorkOrder order : waitingQueue) {
             if (order.hasGoldClient()) {
                 System.out.println("[OrderDao] Priorizando orden oro #" + order.getOrderNumber());
                 return order;
             }
         }
-        // Si no hay oro, tomar la primera normal
+
         WorkOrder order = waitingQueue.getFirst();
         System.out.println("[OrderDao] Siguiente orden normal #" + order.getOrderNumber());
         return order;
@@ -185,29 +185,29 @@ public class OrderDao {
 
 public synchronized boolean assignOrderToChef(WorkOrder order, Employee chef) {
     if (order == null || chef == null) {
-        System.out.println("[OrderDao] ❌ Error: Orden o chef nulo");
+        System.out.println("[OrderDao] Error: Orden o chef nulo");
         return false;
     }
 
-    // Verificar que el chef no tenga ya una orden asignada
+
     if (chef.getCurrentOrder() != null) {
-        System.out.println("[OrderDao] ❌ Chef " + chef.getName() + " ya tiene una orden asignada");
+        System.out.println("[OrderDao]  Chef " + chef.getName() + " ya tiene una orden asignada");
         return false;
     }
 
-    // Verificar que la orden esté en espera
+ 
     if (!waitingQueue.contains(order)) {
-        System.out.println("[OrderDao] ❌ Orden #" + order.getOrderNumber() + " no está en cola de espera");
+        System.out.println("[OrderDao]  Orden #" + order.getOrderNumber() + " no está en cola de espera");
         return false;
     }
 
-    // Verificar que la orden no esté ya asignada a otro chef
+
     if (order.getEmployee() != null) {
-        System.out.println("[OrderDao] ❌ Orden #" + order.getOrderNumber() + " ya está asignada a " + order.getEmployee().getName());
+        System.out.println("[OrderDao]  Orden #" + order.getOrderNumber() + " ya está asignada a " + order.getEmployee().getName());
         return false;
     }
 
-    // Asignar orden al chef
+
     boolean chefAccepted = chef.assignOrder(order);
     if (chefAccepted) {
         order.setEmployee(chef);
@@ -220,13 +220,13 @@ public synchronized boolean assignOrderToChef(WorkOrder order, Employee chef) {
     }
 }
 
-// ✅ MÉTODO CORREGIDO: isOrderAssignedToChef debe ser solo verificación
+
 public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef) {
     if (order == null || chef == null) {
         return false;
     }
     
-    // Verificar que la orden esté asignada al chef específico
+
     Employee assignedChef = order.getEmployee();
     boolean isAssigned = assignedChef != null && assignedChef.getId() == chef.getId();
     
@@ -242,29 +242,26 @@ public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef
     return isAssigned;
 }
 
-    /**
-     * Mueve una orden de espera a cocina
-     */
     public synchronized boolean moveToKitchen(WorkOrder order, Employee chef) {
         if (order == null || chef == null) {
         System.out.println("[OrderDao] ❌ Error: Orden o chef nulo");
         return false;
     }
 
-    // Verificar stock antes de preparar
+
     Dishes dish = order.getDishes();
         if (!hasEnoughStock(dish)) {
             System.out.println("[OrderDao] ❌ No hay suficiente stock para preparar " + dish.getName());
             return false;
         }
 
-    // Restar ingredientes del stock
+
         if (!reduceIngredientsStock(dish)) {
             System.out.println("[OrderDao] ❌ Error al reducir el stock");
             return false;
         }
 
-    // Mover de waiting a kitchen
+
         if (waitingQueue.remove(order)) {
             kitchenQueue.add(order);
             order.setOrderStatus(OrderStatus.IN_KITCHEN);
@@ -284,7 +281,7 @@ public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef
         System.out.println("[OrderDao] IngredientDao configurado");
     }
 
-    // ✅ MÉTODO CORREGIDO: Verificar stock con validación
+ 
     private synchronized boolean hasEnoughStock(Dishes dish) {
         if (ingredientDao == null) {
             System.err.println("[OrderDao] ❌ ERROR: IngredientDao no inicializado");
@@ -318,34 +315,30 @@ public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef
 
     private synchronized boolean reduceIngredientsStock(Dishes dish) {
     if (ingredientDao == null) {
-        System.err.println("[OrderDao] ❌ ERROR: IngredientDao no inicializado");
+        System.err.println("[OrderDao]  ERROR: IngredientDao no inicializado");
         return false;
     }
     
     if (dish == null || dish.getIngredientsId() == null) {
-        System.err.println("[OrderDao] ❌ ERROR: Platillo o ingredientes nulos");
+        System.err.println("[OrderDao]  ERROR: Platillo o ingredientes nulos");
         return false;
     }
     
-    // Lista para rastrear los ingredientes modificados (para rollback si es necesario)
     ArrayList<Integer> modifiedIngredients = new ArrayList<>();
     
     try {
-        // Primero reducir el stock de todos los ingredientes
         for (Integer ingredientId : dish.getIngredientsId()) {
             if (ingredientId == null) continue;
             
             Ingredients ingredient = ingredientDao.getById(ingredientId);
             if (ingredient == null) {
                 System.err.println("[OrderDao] ❌ ERROR: Ingrediente no encontrado: " + ingredientId);
-                // Rollback: restaurar stock de ingredientes ya modificados
                 rollbackStockChanges(modifiedIngredients);
                 return false;
             }
             
             if (!ingredient.reduceStock(1)) {
                 System.err.println("[OrderDao] ❌ ERROR: No se pudo reducir stock del ingrediente: " + ingredient.getName());
-                // Rollback: restaurar stock de ingredientes ya modificados
                 rollbackStockChanges(modifiedIngredients);
                 return false;
             }
@@ -353,19 +346,18 @@ public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef
             modifiedIngredients.add(ingredientId);
         }
         
-        // Después incrementar el contador de uso (SOLO UNA VEZ)
         for (Integer ingredientId : dish.getIngredientsId()) {
             if (ingredientId == null) continue;
             
             ingredientDao.incrementUsageCount(ingredientId);
-            System.out.println("[OrderDao] ✅ Ingrediente " + ingredientId + " usado, contador incrementado");
+            System.out.println("[OrderDao]  Ingrediente " + ingredientId + " usado, contador incrementado");
         }
         
-        System.out.println("[OrderDao] ✅ Stock reducido correctamente para platillo: " + dish.getName());
+        System.out.println("[OrderDao]  Stock reducido correctamente para platillo: " + dish.getName());
         return true;
         
     } catch (Exception e) {
-        System.err.println("[OrderDao] ❌ ERROR en reduceIngredientsStock: " + e.getMessage());
+        System.err.println("[OrderDao]  ERROR en reduceIngredientsStock: " + e.getMessage());
         rollbackStockChanges(modifiedIngredients);
         return false;
     }
@@ -394,25 +386,21 @@ public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef
             return false;
         }
 
-        // Verificar que la orden está en cocina
         if (!kitchenQueue.contains(order)) {
             System.out.println("[OrderDao]  Orden #" + order.getOrderNumber() + " no está en cocina");
             return false;
         }
 
-        // Verificar que está asignada al chef correcto
         if (order.getEmployee() == null || order.getEmployee().getId() != chef.getId()) {
             System.out.println("[OrderDao]  Orden no asignada al chef correcto");
             return false;
         }
 
-        // Mover de cocina a ready
         if (kitchenQueue.remove(order)) {
             readyQueue.add(order);
             order.setOrderStatus(OrderStatus.READY);
             updateOrderInList(order);
             
-            // Liberar al chef
             chef.endOrder();
             
             System.out.println("[OrderDao]  Orden #" + order.getOrderNumber() + 
@@ -440,7 +428,6 @@ public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef
         }
 
         if (readyQueue.remove(order)) {
-            // Actualizar cliente
             Client client = order.getClient();
             if (client != null) {
                 client.increasePaidDishes();
@@ -574,14 +561,12 @@ public synchronized boolean isOrderAssignedToChef(WorkOrder order, Employee chef
     public synchronized void reorganizeWaitingQueue() {
         LinkedList<WorkOrder> newQueue = new LinkedList<>();
         
-        // Primero agregar clientes oro
         for (WorkOrder order : waitingQueue) {
             if (order.hasGoldClient()) {
                 newQueue.add(order);
             }
         }
         
-        // Luego agregar clientes normales
         for (WorkOrder order : waitingQueue) {
             if (!order.hasGoldClient()) {
                 newQueue.add(order);

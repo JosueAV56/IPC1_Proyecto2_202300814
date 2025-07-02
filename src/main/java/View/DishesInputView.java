@@ -41,7 +41,7 @@ public class DishesInputView extends javax.swing.JDialog {
                 SwingUtilities.invokeLater(() -> {
                     updateOrdersTable(orders);
                     updateBarsFromOrders(orders);
-                    repaint(); // Forzar repintado
+                    repaint(); 
                 });
             }
 
@@ -51,7 +51,7 @@ public class DishesInputView extends javax.swing.JDialog {
                                  " Fase: " + phase + " Progreso: " + progress + "%");
                 SwingUtilities.invokeLater(() -> {
                     updateIndividualProgressBar(orderNumber, phase, progress);
-                    repaint(); // Forzar repintado
+                    repaint(); 
                 });
             }
 
@@ -62,7 +62,6 @@ public class DishesInputView extends javax.swing.JDialog {
             }
         };
 
-        // CORREGIDO: Agregar el cliente al ThreadManager ANTES de crear el ProgressThread
         mainController.getOrderController().getThreadManager().addClientProgress(currentClient, listener);
         
         System.out.println("[DishesInputView] ProgressThread y listener configurados para cliente: " + currentClient.getUser());
@@ -101,9 +100,7 @@ public class DishesInputView extends javax.swing.JDialog {
     final int finalReadyCount = readyCount;
     
     
-    // Solo actualizar texto cuando no hay progreso individual activo
     SwingUtilities.invokeLater(() -> {
-        // Si no hay órdenes en espera, resetear barra
         if (finalWaitingCount == 0) {
             waitingQueueBar.setValue(0);
             waitingQueueBar.setString("Cola: Sin órdenes");
@@ -112,16 +109,13 @@ public class DishesInputView extends javax.swing.JDialog {
             waitingQueueBar.setString("Cola: " + finalWaitingCount + " órdenes");
         }
         
-        // Si no hay órdenes en cocina, resetear barra
         if (finalKitchenCount == 0) {
             kitchenBar.setValue(0);
             kitchenBar.setString("Cocina: Sin órdenes");
         } else if (kitchenBar.getString().contains("Sin órdenes")) {
-            // Solo actualizar si no hay progreso individual activo
             kitchenBar.setString("Cocina: " + finalKitchenCount + " órdenes");
         }
         
-        // Para las órdenes listas
         if (finalReadyCount > 0) {
             if (!readyBar.getString().contains("Orden #")) {
                 readyBar.setValue(100);
@@ -132,7 +126,6 @@ public class DishesInputView extends javax.swing.JDialog {
             readyBar.setString("Listo: Sin órdenes");
         }
         
-        // CORREGIDO: Forzar actualización visual
         waitingQueueBar.revalidate();
         waitingQueueBar.repaint();
         kitchenBar.revalidate();
@@ -182,36 +175,32 @@ public class DishesInputView extends javax.swing.JDialog {
                 break;
         }
         
-        // Forzar actualización visual
         waitingQueueBar.repaint();
         kitchenBar.repaint();
         readyBar.repaint();
     });
 }
     private void setupProgressBars() {
-    // Configuración de la barra de cola de espera
     waitingQueueBar.setMinimum(0);
     waitingQueueBar.setMaximum(100);
     waitingQueueBar.setStringPainted(true);
     waitingQueueBar.setValue(0);
     waitingQueueBar.setString("Cola: Sin órdenes");
-    waitingQueueBar.setForeground(new java.awt.Color(255, 165, 0)); // Naranja
+    waitingQueueBar.setForeground(new java.awt.Color(255, 165, 0)); 
 
-    // Configuración de la barra de cocina
     kitchenBar.setMinimum(0);
     kitchenBar.setMaximum(100);
     kitchenBar.setStringPainted(true);
     kitchenBar.setValue(0);
     kitchenBar.setString("Cocina: Sin órdenes");
-    kitchenBar.setForeground(new java.awt.Color(255, 0, 0)); // Rojo
+    kitchenBar.setForeground(new java.awt.Color(255, 0, 0)); 
 
-    // Configuración de la barra de listo
     readyBar.setMinimum(0);
     readyBar.setMaximum(100);
     readyBar.setStringPainted(true);
     readyBar.setValue(0);
     readyBar.setString("Listo: Sin órdenes");
-    readyBar.setForeground(new java.awt.Color(0, 255, 0)); // Verde
+    readyBar.setForeground(new java.awt.Color(0, 255, 0)); 
     
     System.out.println("[UI] Barras de progreso inicializadas correctamente");
 }
@@ -220,7 +209,6 @@ public class DishesInputView extends javax.swing.JDialog {
     public void dispose() {
         System.out.println("[UI] Cerrando DishesInputView");
         
-        // CORREGIDO: Remover el cliente del ThreadManager para limpiar el listener
         if (mainController != null && currentClient != null) {
             mainController.getOrderController().getThreadManager().removeClientProgress(currentClient.getDpi());
         }
@@ -229,7 +217,6 @@ public class DishesInputView extends javax.swing.JDialog {
     }
     
     private void configureTable() {
-        // Configurar modelo de tabla
         ordersClientTable.setModel(new DefaultTableModel(
             new Object[][]{},
             new String[]{"N° Orden", "Platillo", "Estado", "Cocinero"}

@@ -24,7 +24,7 @@ public class AdminClientView extends javax.swing.JDialog {
         clientTbl.getTableHeader().setReorderingAllowed(false);
     }
     private void loadClients() {
-        tableModel.setRowCount(0); // Limpiar tabla
+        tableModel.setRowCount(0); 
         ArrayList<Client> clients = mainController.getAdminController().getAll();
         
         for (Client client : clients) {
@@ -201,7 +201,6 @@ public class AdminClientView extends javax.swing.JDialog {
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         String filePath = fileChooser.getSelectedFile().getAbsolutePath();
         
-        // Usar FileController para leer el archivo
         ArrayList<Client> clients = mainController.getFileController().loadClientsFromFile(filePath);
         
         if (clients != null && !clients.isEmpty()) {
@@ -226,7 +225,7 @@ public class AdminClientView extends javax.swing.JDialog {
                 "Resultado de la importación",
                 JOptionPane.INFORMATION_MESSAGE);
             
-            loadClients(); // Refrescar la tabla
+            loadClients(); 
         } else {
             JOptionPane.showMessageDialog(this,
                 "No se pudieron cargar clientes del archivo",

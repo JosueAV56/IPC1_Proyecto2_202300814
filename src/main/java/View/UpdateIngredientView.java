@@ -21,7 +21,7 @@ public class UpdateIngredientView extends javax.swing.JDialog {
         
         if (ingredient != null) {
             idTxt.setText(String.valueOf(ingredient.getIdentifier()));
-            idTxt.setEditable(false); // El ID no se puede modificar
+            idTxt.setEditable(false);
             IngredientTxt.setText(ingredient.getName());
             brandTxt.setText(ingredient.getBrand());
             stockTxt.setText(String.valueOf(ingredient.getStock()));

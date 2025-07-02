@@ -21,10 +21,8 @@ public class ThreadManager {
     public synchronized void initializeWithChefs(ArrayList<Employee> existingChefs) {
         System.out.println("[ThreadManager] Inicializando con " + existingChefs.size() + " chefs existentes");
         
-        // Detener hilos existentes primero
         stopAllKitchenThreads();
         
-        // Crear hilos solo para chefs válidos
         for (Employee chef : existingChefs) {
             if (chef != null && chef.isChef()) {
                 System.out.println("[ThreadManager] Creando hilo para chef: " + chef.getName() + " (ID: " + chef.getId() + ")");
@@ -56,7 +54,7 @@ public class ThreadManager {
             }
         }
         
-        System.out.println("[ThreadManager] ✅ Todos los hilos de cocina iniciados");
+        System.out.println("[ThreadManager] Todos los hilos de cocina iniciados");
     }
 
     private void stopAllKitchenThreads() {
@@ -74,7 +72,7 @@ public class ThreadManager {
             }
         }
         chefsThread.clear();
-        System.out.println("[ThreadManager] ✅ Hilos de cocina detenidos");
+        System.out.println("[ThreadManager] Hilos de cocina detenidos");
     }
     
     public synchronized void stopSystem(){
@@ -82,10 +80,8 @@ public class ThreadManager {
         if(running){
             running = false;
             
-            // Detener hilos de cocina
             stopAllKitchenThreads();
             
-            // Detener hilos de progreso
             System.out.println("[ThreadManager] Deteniendo " + progressThreads.size() + " ProgressThreads");
             for(ProgressThread pt: progressThreads.values()){
                 System.out.println("[ThreadManager] Deteniendo ProgressThread: " + pt.getClient().getUser());
@@ -99,7 +95,7 @@ public class ThreadManager {
             }
             
             progressThreads.clear();
-            System.out.println("[ThreadManager] ✅ Todos los hilos detenidos");
+            System.out.println("[ThreadManager] Todos los hilos detenidos");
         } else {
             System.out.println("[ThreadManager] Sistema ya estaba detenido");
         }
@@ -128,7 +124,6 @@ public class ThreadManager {
             ProgressThread progressThread = new ProgressThread(client, orderDao, listener);
             progressThreads.put(client.getDpi(), progressThread);
             
-            // Configurar listener en todos los KitchenThreads activos
             System.out.println("[ThreadManager] Configurando listener en " + chefsThread.size() + " KitchenThreads");
             for (KitchenThread kitchenThread : chefsThread.values()) {
                 kitchenThread.setProgressListener(listener);
@@ -183,7 +178,7 @@ public class ThreadManager {
     public void restartWithChefs(ArrayList<Employee> chefs) throws InterruptedException {
         System.out.println("[ThreadManager] Reiniciando sistema con chefs específicos...");
         stopSystem();
-        Thread.sleep(1000); // Pausa para asegurar limpieza
+        Thread.sleep(1000);
         initializeWithChefs(chefs);
         startKitchenThreads();
     }
@@ -221,14 +216,12 @@ public class ThreadManager {
         return running;
     }
     
-    //  verificar si hay hilos inicializados
     public boolean hasThreadsInitialized() {
         boolean initialized = !chefsThread.isEmpty();
         System.out.println("[ThreadManager] Hilos inicializados: " + initialized);
         return initialized;
     }
     
-    // Obtener chef por ID
     public Employee getChefById(int chefId) {
         KitchenThread thread = chefsThread.get(chefId);
         return thread != null ? thread.getChef() : null;

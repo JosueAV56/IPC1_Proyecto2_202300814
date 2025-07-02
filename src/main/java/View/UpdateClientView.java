@@ -186,17 +186,15 @@ public class UpdateClientView extends javax.swing.JDialog {
             return;
         }
         
-        // Crear objeto cliente con los datos actualizados
         Client updatedClient = new Client(
             dpiTxt.getText(),
             nameTxt.getText(),
             userTxt.getText(),
             passTxt.getText(),
             photoTxt.getText(),
-            clientDao.getBydpi(dpi).getTypeClient() // Mantener el mismo tipo
+            clientDao.getBydpi(dpi).getTypeClient() 
         );
         
-        // Actualizar en el DAO
         if (clientDao.uptade(updatedClient)) {
             JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente");
             this.dispose();

@@ -196,7 +196,6 @@ public class RegisterView extends javax.swing.JDialog {
         String password = passTxt.getText().trim();
         String photoPath = photoPathTxt.getText().trim();
 
-            // Validar campos obligatorios
         if (dpi.isEmpty() || completeName.isEmpty() || user.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, 
                 "DPI, nombre completo, usuario y contraseña son obligatorios", 
@@ -204,7 +203,6 @@ public class RegisterView extends javax.swing.JDialog {
                 return;
         }
 
-            // Validar DPI (debe ser numérico y tener 13 caracteres)
             if (!dpi.matches("\\d{13}")) {
                 JOptionPane.showMessageDialog(this, 
                     "El DPI debe contener 13 dígitos numéricos", 
@@ -212,10 +210,8 @@ public class RegisterView extends javax.swing.JDialog {
                 return;
             }
 
-            // Crear el cliente (tipo COMMUN por defecto)
             Client newClient = new Client(dpi, completeName, user, password, photoPath, TypeClient.COMMUN);
 
-            // Registrar el cliente
             boolean success = mainController.getClientController().registerClient(newClient);
 
             if (success) {
